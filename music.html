@@ -1,47 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Our Musics / 我们的音乐</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Music Showcase</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
+      font-family: sans-serif;
       line-height: 1.6;
-      background-color: #f9f9f9;
+      margin: 40px;
+      background-color: #f4f4f9;
       color: #333;
     }
-    h1 {
+    h1, h2 {
       text-align: center;
-      color: #4CAF50;
+    }
+    .music-section {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
     .music-link {
-      margin-bottom: 20px;
-      font-size: 18px;
+      margin: 20px 0;
+      text-align: center;
     }
     .music-link a {
-      color: #4CAF50;
+      color: #0077cc;
+      font-size: 1.2em;
       text-decoration: none;
+    }
+    .music-link a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>Our Musics / 我们的音乐</h1>
 
-  <div class="music-link">
-    <a href="https://your-bandcamp-link1.com" target="_blank">🎧 Song 1 / 歌曲1</a>
-  </div>
-  <div class="music-link">
-    <a href="https://your-bandcamp-link2.com" target="_blank">🎧 Song 2 / 歌曲2</a>
-  </div>
-  <div class="music-link">
-    <a href="https://your-bandcamp-link3.com" target="_blank">🎧 Song 3 / 歌曲3</a>
-  </div>
+  <h1>Our Music / 我们的音乐</h1>
 
-  <p style="text-align:center; margin-top:40px;">
-    <a href="index.html" style="color:#999; text-decoration: none;">⬅️ Back to Home / 返回首页</a>
-  </p>
+  <section class="music-section">
+    <h2>Music Platforms / 音乐平台</h2>
+
+    <div class="music-link">
+      <a href="https://billund.bandcamp.com/" target="_blank">🎧 Visit My Bandcamp / 访问我的Bandcamp主页</a>
+    </div>
+
+    <!-- 将来你想添加新平台链接时，复制并修改下面的块即可 -->
+    <!--
+    <div class="music-link">
+      <a href="https://你的其他平台链接" target="_blank">🎧 平台名 / Platform Name</a>
+    </div>
+    -->
+
+  </section>
+
 </body>
 </html>
