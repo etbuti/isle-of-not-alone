@@ -1,38 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Music Releases | Isle of Not Alone</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  </head>
-  <body class="bg-gray-100 font-sans leading-normal tracking-normal">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Music - Goldisle Light Org Ltd</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 {
+      color: #2a2a2a;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    .links, .players {
+      margin-top: 20px;
+    }
+    .links a {
+      display: block;
+      margin-bottom: 10px;
+      color: #007acc;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    iframe {
+      display: block;
+      margin-bottom: 40px;
+    }
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Our Music</h1>
 
-    <div class="min-h-screen flex flex-col justify-center items-center">
-      <div class="max-w-2xl bg-white rounded-lg shadow-md p-8">
-        <h1 class="text-3xl font-bold mb-6 text-center">Our Music Releases / 我们的音乐作品</h1>
-
-        <p class="mb-4 text-gray-700 text-center">
-          Explore our published works below. Click the links to listen directly on Bandcamp.
-        </p>
-
-        <p class="mb-4 text-center">
-          <a href="https://billund.bandcamp.com/album/qingdao-in-the-sea-breeze" target="_blank" class="text-blue-600 underline">
-            Qingdao in the Sea Breeze - Listen on Bandcamp
-          </a>
-        </p>
-
-        <p class="mb-4 text-center">
-          <a href="https://billund.bandcamp.com/album/where-she-was" target="_blank" class="text-blue-600 underline">
-            Where She Was - Listen on Bandcamp
-          </a>
-        </p>
-
-        <div class="mt-8 text-center">
-          <a href="index.html" class="text-gray-500 underline hover:text-gray-700">← Back to Home / 返回首页</a>
-        </div>
-      </div>
+    <div class="links">
+      <h2>Direct Album Links:</h2>
+      <a href="https://billund.bandcamp.com/album/qingdao-in-the-sea-breeze" target="_blank">
+        Qingdao in the Sea Breeze
+      </a>
+      <a href="https://billund.bandcamp.com/album/where-she-was" target="_blank">
+        Where She Was
+      </a>
     </div>
 
-  </body>
+    <div class="players">
+      <h2>Listen to Our Music</h2>
+
+      <!-- Qingdao in the Sea Breeze player -->
+      <iframe style="border: 0; width: 100%; max-width: 350px; height: 470px;" 
+              src="https://bandcamp.com/EmbeddedPlayer/album=3275103831/size=large/bgcol=ffffff/linkcol=0687f5/artwork=small/transparent=true/" 
+              seamless>
+        <a href="https://billund.bandcamp.com/album/qingdao-in-the-sea-breeze">Qingdao in the Sea Breeze by billund</a>
+      </iframe>
+
+      <!-- Where She Was player -->
+      <iframe style="border: 0; width: 100%; max-width: 350px; height: 470px;" 
+              src="https://bandcamp.com/EmbeddedPlayer/album=1110646513/size=large/bgcol=ffffff/linkcol=0687f5/artwork=small/transparent=true/" 
+              seamless>
+        <a href="https://billund.bandcamp.com/album/where-she-was">Where She Was by billund</a>
+      </iframe>
+    </div>
+
+    <footer>
+      &copy; 2025 Goldisle Light Org Ltd. All rights reserved.
+    </footer>
+  </div>
+</body>
 </html>
