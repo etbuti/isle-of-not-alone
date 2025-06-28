@@ -1,61 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Music Showcase</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      line-height: 1.6;
-      margin: 40px;
-      background-color: #f4f4f9;
-      color: #333;
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    .music-section {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    .music-link {
-      margin: 20px 0;
-      text-align: center;
-    }
-    .music-link a {
-      color: #0077cc;
-      font-size: 1.2em;
-      text-decoration: none;
-    }
-    .music-link a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Music Releases | Isle of Not Alone</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  </head>
+  <body class="bg-gray-100 font-sans leading-normal tracking-normal">
 
-  <h1>Our Music / 我们的音乐</h1>
+    <div class="min-h-screen flex flex-col justify-center items-center">
+      <div class="max-w-2xl bg-white rounded-lg shadow-md p-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Our Music Releases / 我们的音乐作品</h1>
 
-  <section class="music-section">
-    <h2>Music Platforms / 音乐平台</h2>
+        <p class="mb-4 text-gray-700 text-center">
+          Explore our published works below. Click the links to listen directly on Bandcamp.
+        </p>
 
-    <div class="music-link">
-      <a href="https://billund.bandcamp.com/" target="_blank">🎧 Visit My Bandcamp / 访问我的Bandcamp主页</a>
+        <p class="mb-4 text-center">
+          <a href="https://billund.bandcamp.com/album/qingdao-in-the-sea-breeze" target="_blank" class="text-blue-600 underline">
+            Qingdao in the Sea Breeze - Listen on Bandcamp
+          </a>
+        </p>
+
+        <p class="mb-4 text-center">
+          <a href="https://billund.bandcamp.com/album/where-she-was" target="_blank" class="text-blue-600 underline">
+            Where She Was - Listen on Bandcamp
+          </a>
+        </p>
+
+        <div class="mt-8 text-center">
+          <a href="index.html" class="text-gray-500 underline hover:text-gray-700">← Back to Home / 返回首页</a>
+        </div>
+      </div>
     </div>
 
-    <!-- 将来你想添加新平台链接时，复制并修改下面的块即可 -->
-    <!--
-    <div class="music-link">
-      <a href="https://你的其他平台链接" target="_blank">🎧 平台名 / Platform Name</a>
-    </div>
-    -->
-
-  </section>
-
-</body>
+  </body>
 </html>
