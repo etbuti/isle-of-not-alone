@@ -1,36 +1,38 @@
+const CACHE_NAME = 'goldisle-cache-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/budcup2025.html',
+  '/budcup2025-cn.html',
+  '/music.html',
+  '/trade.html',
+  // 如果你还有其他页面或资源文件，如 CSS、图片等，也可以在这里继续添加
+];
+
 self.addEventListener('install', event => {
-  console.log('Service Worker installing.');
   event.waitUntil(
-    caches.open('static-v1').then(cache =>
-      cache.addAll([
-        '/',                   // 首页
-        '/index.html',         // 入口文件
-        '/manifest.json',      // manifest
-        '/icons/icon-192.png', // 小图标
-        '/icons/icon-512.png', // 大图标
-        // 如果有CSS或JS文件也可以加上，比如：
-        // '/styles.css',
-        // '/app.js',
-      ])
-    )
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return cache.addAll(urlsToCache);
+      })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  console.log('Service Worker activating.');
-  // 清理旧缓存（可选）
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(key => key !== 'static-v1').map(key => caches.delete(key))
-      )
-    )
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(name => name !== CACHE_NAME)
+                  .map(name => caches.delete(name))
+      );
+    })
   );
 });
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
   );
 });
