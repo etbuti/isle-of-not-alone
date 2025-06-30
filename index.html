@@ -133,6 +133,47 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <link rel="manifest" href="manifest.json">
+<!-- 👇 安装提示按钮脚本开始 -->
+<script>
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // 阻止浏览器默认提示
+    deferredPrompt = e;
+
+    // 创建并插入提示按钮
+    const installBtn = document.createElement('button');
+    installBtn.textContent = '📲 安装到主屏幕';
+    installBtn.style = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #0a4a78;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 1000;
+    `;
+    document.body.appendChild(installBtn);
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('✅ 用户已接受安装');
+        } else {
+          console.log('❌ 用户取消安装');
+        }
+        deferredPrompt = null;
+      });
+    });
+  });
+</script>
+<!-- 👆 安装提示按钮脚本结束 -->
 
 </body>
 </html>
