@@ -35,25 +35,6 @@
 <body>
   <h1>网站更新记录</h1>
 
-<script>
-function addDiaryEntry(“今天下雨了，喝了杯热茶”) {
-  const now = new Date();
-  const timestamp = now.getFullYear() + '-' +
-    String(now.getMonth() + 1).padStart(2, '0') + '-' +
-    String(now.getDate()).padStart(2, '0') + ' ' +
-    String(now.getHours()).padStart(2, '0') + ':' +
-    String(now.getMinutes()).padStart(2, '0');
-
-  const entryWithTime = text + ' — ' + timestamp;
-
-  // 把日记插到页面（假设有个 id 为 diary 的容器）
-  const diaryContainer = document.getElementById('diary');
-  const p = document.createElement('p');
-  p.textContent = entryWithTime;
-  diaryContainer.appendChild(p);
-}
-</script>
-
 2025年8月9日，billund,离开伦敦，从Harwich港乘班轮经北海去阿姆。这条从英国出来的线路，非常随意而舒服。
   <p>这里将展示历史公告、更新说明或其他消息。
      <li><strong>12 July 2025：</strong> Evan Bei Insert Library open。</li>
