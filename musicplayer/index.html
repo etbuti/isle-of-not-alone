@@ -4,17 +4,7 @@
 <meta charset="utf-8">
 <title>Goldisle 音乐播放器</title>
 <style>
-body {
-  margin:0;
-  background:linear-gradient(180deg,#3a4d5c,#1a252f);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  font-family:sans-serif;
-  color:#fff;
-  min-height:100vh;
-  padding-bottom:20px;
-}
+body { margin:0; background:linear-gradient(180deg,#3a4d5c,#1a252f); display:flex; flex-direction:column; align-items:center; font-family:sans-serif; color:#fff; min-height:100vh; padding-bottom:20px;}
 h1{margin-top:15px;font-size:1.6em;text-align:center;}
 canvas{width:90%;max-width:600px;height:180px;background:rgba(0,0,0,0.2);border-radius:12px;margin-top:15px;}
 .controls{margin-top:15px;display:flex;flex-wrap:wrap;justify-content:center;}
@@ -51,8 +41,9 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth*0.9;canvas.height=200;
 
 // 播放列表
-let tracks=["SW11 Break the Promise","SW12 Another Me.mp3","SW13 When the Wind Blows.mp3"];
-let allTracks=[...tracks];let currentIndex=0;
+let tracks=["SW11 Break the Promise.mp3","SW12 Another Me.mp3","SW13 When the Wind Blows.mp3"];
+let allTracks=[...tracks];
+let currentIndex=0;
 
 const playlistEl=document.getElementById("playlist");
 const searchInput=document.getElementById("search");
@@ -62,8 +53,9 @@ let lyricsData=[];let currentLyricIndex=0;
 // Web Audio
 const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
 const analyser=audioCtx.createAnalyser();
-const source=audioCtx.createMediaElementSource(audio); // 只创建一次
-source.connect(analyser);analyser.connect(audioCtx.destination);
+const source=audioCtx.createMediaElementSource(audio);
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
 analyser.fftSize=256;
 const bufferLength=analyser.frequencyBinCount;
 const dataArray=new Uint8Array(bufferLength);
@@ -92,7 +84,7 @@ draw();
 function playAudio(){if(audioCtx.state==="suspended") audioCtx.resume();audio.play().catch(e=>console.log(e));}
 function pauseAudio(){audio.pause();}
 
-// 播放指定歌曲
+// 渲染播放列表
 function renderPlaylist(list){
   playlistEl.innerHTML="";
   list.forEach((track,idx)=>{
@@ -108,17 +100,23 @@ function highlightPlaylist(){
   lis.forEach(li=>li.classList.remove("active"));
   if(lis[currentIndex]) lis[currentIndex].classList.add("active");
 }
+
+// 播放指定歌曲
 function playTrack(idx){
   if(idx<0||idx>=tracks.length) return;
   currentIndex=idx;
-  audio.src=tracks[currentIndex]; // 切歌只修改 src
-  audio.load();
+
+  audio.pause();
+  audio.currentTime=0;
+  audio.src=tracks[currentIndex];
+  if(audioCtx.state==="suspended") audioCtx.resume();
   audio.play().catch(err=>console.log(err));
+
   highlightPlaylist();
   loadLyrics(tracks[currentIndex]);
 }
 
-// 搜索
+// 搜索功能
 searchInput.addEventListener("input",()=>{
   const keyword=searchInput.value.toLowerCase();
   const filtered=allTracks.filter(t=>t.toLowerCase().includes(keyword));
@@ -126,8 +124,8 @@ searchInput.addEventListener("input",()=>{
   renderPlaylist(filtered);
 });
 
+// 初始化
 renderPlaylist(tracks);
-playTrack(0);
 
 // 歌词功能
 function loadLyrics(track){
@@ -158,6 +156,7 @@ function parseLRC(text){
     lyricsEl.appendChild(li);
   });
 }
+
 audio.addEventListener("timeupdate",()=>{
   if(!lyricsData.length) return;
   const t=audio.currentTime;
@@ -179,4 +178,3 @@ audio.addEventListener("timeupdate",()=>{
 </script>
 </body>
 </html>
-
