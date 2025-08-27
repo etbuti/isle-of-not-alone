@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Goldisle 音乐播放器</title>
+<style>
+/* --------- CSS 样式（自适应 + 波形 + 滚动歌词 + 搜索） --------- */
+body {
+  margin:0;
+  background:linear-gradient(180deg,#3a4d5c,#1a252f);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-family:sans-serif;
+  color:#fff;
+  min-height:100vh;
+  padding-bottom:20px;
+}
+h1{margin-top:15px;font-size:1.6em;text-align:center;}
+canvas{width:90%;max-width:600px;height:180px;background:rgba(0,0,0,0.2);border-radius:12px;margin-top:15px;}
+.controls{margin-top:15px;display:flex;flex-wrap:wrap;justify-content:center;}
+button{background:rgba(255,255,255,0.15);border:none;padding:10px 18px;margin:5px;color:#fff;border-radius:8px;cursor:pointer;flex:1 0 40%;max-width:120px;text-align:center;}
+button:hover{background:rgba(255,255,255,0.3);}
+#search{margin-top:15px;width:90%;max-width:600px;padding:8px 12px;border-radius:6px;border:none;outline:none;font-size:14px;}
+#playlist{list-style:none;padding:0;margin:10px 0 0 0;width:90%;max-width:600px;}
+#playlist li{padding:8px;cursor:pointer;border-radius:4px;font-size:0.95em;}
+#playlist li:hover{background:rgba(255,255,255,0.1);}
+#playlist li.active{background:rgba(255,255,255,0.25);}
+#lyrics-container{margin-top:15px;width:90%;max-width:600px;height:160px;overflow-y:auto;background:rgba(255,255,255,0.05);border-radius:8px;padding:10px;text-align:center;}
+#lyrics{list-style:none;padding:0;margin:0;}
+#lyrics li{padding:4px 0;color:#aaa;font-size:0.95em;transition:color 0.3s,font-size 0.3s;}
+#lyrics li.active{color:#fff;font-size:1.15em;}
+#lyrics li.before,#lyrics li.after{color:#888;}
+</style>
+</head>
+<body>
+<h1>Goldisle 音乐播放器</h1>
+<audio id="audio" crossorigin="anonymous"></audio>
+<div class="controls">
+<button onclick="playAudio()">▶ 播放</button>
+<button onclick="pauseAudio()">⏸ 暂停</button>
+</div>
+<input type="text" id="search" placeholder="🔍 搜索歌曲..." />
+<ul id="playlist"></ul>
+<canvas id="visualizer"></canvas>
+<div id="lyrics-container"><ul id="lyrics"></ul></div>
+
+<script>
+const audio=document.getElementById("audio");
+const canvas=document.getElementById("visualizer");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth*0.9;canvas.height=200;
+
+// 播放列表
+let tracks=["SW11 Break the Promise.mp3","SW12 Another Me.mp3","SW13 When the Wind Blows.mp3"];
+let allTracks=[...tracks];let currentIndex=0;
+
+const playlistEl=document.getElementById("playlist");
+const searchInput=document.getElementById("search");
+const lyricsEl=document.getElementById("lyrics");
+let lyricsData=[];let currentLyricIndex=0;
+
+// Web Audio
+const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+const analyser=audioCtx.createAnalyser();
+let source=audioCtx.createMediaElementSource(audio);
+source.connect(analyser);analyser.connect(audioCtx.destination);
+analyser.fftSize=256;
+const bufferLength=analyser.frequencyBinCount;
+const dataArray=new Uint8Array(bufferLength);
+
+function draw(){
+  requestAnimationFrame(draw);
+  analyser.getByteFrequencyData(dataArray);
+  ctx.fillStyle="rgba(26,37,47,0.4)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  const barWidth=(canvas.width/bufferLength)*2.5;
+  let x=0;
+  for(let i=0;i<bufferLength;i++){
+    const barHeight=dataArray[i];
+    const gradient=ctx.createLinearGradient(0,0,0,canvas.height);
+    gradient.addColorStop(0,"#8cc0de");
+    gradient.addColorStop(1,"#30556d");
+    ctx.fillStyle=gradient;
+    ctx.fillRect(x,canvas.height-barHeight/2,barWidth,barHeight/2);
+    x+=barWidth+1;
+  }
+}
+draw();
+
+function playAudio(){ audioCtx.resume(); audio.play(); }
+function pauseAudio(){ audio.pause(); }
+
+// 播放指定歌曲
+function renderPlaylist(list){
+  playlistEl.innerHTML="";
+  list.forEach((track,idx)=>{
+    const li=document.createElement("li");
+    li.textContent=track;
+    li.addEventListener("click",()=>playTrack(idx));
+    playlistEl.appendChild(li);
+  });
+  highlightPlaylist();
+}
+function highlightPlaylist(){
+  const lis=playlistEl.querySelectorAll("li");
+  lis.forEach(li=>li.classList.remove("active"));
+  if(lis[currentIndex]) lis[currentIndex].classList.add("active");
+}
+function playTrack(idx){
+  if(idx<0||idx>=tracks.length) return;
+  currentIndex=idx;
+  audio.src=tracks[currentIndex];
+  audio.load();
+  audio.play();
+  if(audioCtx.state==="suspended") audioCtx.resume();
+  source.disconnect();
+  source=audioCtx.createMediaElementSource(audio);
+  source.connect(analyser);analyser.connect(audioCtx.destination);
+  highlightPlaylist();
+  loadLyrics(tracks[currentIndex]);
+}
+
+// 搜索
+searchInput.addEventListener("input",()=>{
+  const keyword=searchInput.value.toLowerCase();
+  const filtered=allTracks.filter(t=>t.toLowerCase().includes(keyword));
+  tracks=filtered;
+  renderPlaylist(filtered);
+});
+
+renderPlaylist(tracks);
+playTrack(0);
+
+// 歌词
+function loadLyrics(track){
+  const lrcFile=track.replace(".mp3",".lrc");
+  fetch(lrcFile).then(res=>res.text()).then(parseLRC).catch(()=>{lyricsData=[];lyricsEl.innerHTML="<li>暂无歌词</li>";});
+}
+function parseLRC(text){
+  lyricsData=[];
+  lyricsEl.innerHTML="";
+  const lines=text.split("\n");
+  const timeExp=/\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/;
+  lines.forEach(line=>{
+    const match=timeExp.exec(line);
+    if(match){
+      const min=parseInt(match[1]),sec=parseInt(match[2]),ms=match[3]?parseInt(match[3]):0;
+      const time=min*60+sec+ms/1000;
+      const txt=line.replace(timeExp,"").trim();
+      if(txt) lyricsData.push({time,text:txt});
+    }
+  });
+  lyricsData.sort((a,b)=>a.time-b.time);
+  lyricsData.forEach(item=>{
+    const li=document.createElement("li");
+    li.textContent=item.text;
+    lyricsEl.appendChild(li);
+  });
+}
+audio.addEventListener("timeupdate",()=>{
+  if(!lyricsData.length) return;
+  const t=audio.currentTime;
+  for(let i=0;i<lyricsData.length;i++){
+    if(t<lyricsData[i].time){currentLyricIndex=i-1;break;}
+  }
+  if(currentLyricIndex<0) currentLyricIndex=0;
+  const lis=lyricsEl.querySelectorAll("li");
+  lis.forEach((li,idx)=>{li.classList.remove("active","before","after");if(idx<currentLyricIndex) li.classList.add("before");else if(idx>currentLyricIndex) li.classList.add("after");});
+  if(lyricsData[currentLyricIndex]) lis[currentLyricIndex].classList.add("active");
+  const container=document.getElementById("lyrics-container");
+  const activeLi=lis[currentLyricIndex];
+  if(activeLi) container.scrollTop=activeLi.offsetTop-container.clientHeight/2+activeLi.clientHeight/2;
+});
+</script>
+</body>
+</html>
