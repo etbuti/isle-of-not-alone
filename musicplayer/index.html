@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <title>Goldisle 音乐播放器</title>
 <style>
-/* --------- CSS 样式（自适应 + 波形 + 滚动歌词 + 搜索） --------- */
 body {
   margin:0;
   background:linear-gradient(180deg,#3a4d5c,#1a252f);
@@ -52,7 +51,7 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth*0.9;canvas.height=200;
 
 // 播放列表
-let tracks=["SW11 Break the Promise.mp3","SW12 Another Me.mp3","SW13 When the Wind Blows.mp3"];
+let tracks=["song1.mp3","song2.mp3"];
 let allTracks=[...tracks];let currentIndex=0;
 
 const playlistEl=document.getElementById("playlist");
@@ -63,12 +62,13 @@ let lyricsData=[];let currentLyricIndex=0;
 // Web Audio
 const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
 const analyser=audioCtx.createAnalyser();
-let source=audioCtx.createMediaElementSource(audio);
+const source=audioCtx.createMediaElementSource(audio); // 只创建一次
 source.connect(analyser);analyser.connect(audioCtx.destination);
 analyser.fftSize=256;
 const bufferLength=analyser.frequencyBinCount;
 const dataArray=new Uint8Array(bufferLength);
 
+// 波形绘制
 function draw(){
   requestAnimationFrame(draw);
   analyser.getByteFrequencyData(dataArray);
@@ -88,8 +88,9 @@ function draw(){
 }
 draw();
 
-function playAudio(){ audioCtx.resume(); audio.play(); }
-function pauseAudio(){ audio.pause(); }
+// 播放/暂停
+function playAudio(){if(audioCtx.state==="suspended") audioCtx.resume();audio.play().catch(e=>console.log(e));}
+function pauseAudio(){audio.pause();}
 
 // 播放指定歌曲
 function renderPlaylist(list){
@@ -110,13 +111,9 @@ function highlightPlaylist(){
 function playTrack(idx){
   if(idx<0||idx>=tracks.length) return;
   currentIndex=idx;
-  audio.src=tracks[currentIndex];
+  audio.src=tracks[currentIndex]; // 切歌只修改 src
   audio.load();
-  audio.play();
-  if(audioCtx.state==="suspended") audioCtx.resume();
-  source.disconnect();
-  source=audioCtx.createMediaElementSource(audio);
-  source.connect(analyser);analyser.connect(audioCtx.destination);
+  audio.play().catch(err=>console.log(err));
   highlightPlaylist();
   loadLyrics(tracks[currentIndex]);
 }
@@ -132,10 +129,13 @@ searchInput.addEventListener("input",()=>{
 renderPlaylist(tracks);
 playTrack(0);
 
-// 歌词
+// 歌词功能
 function loadLyrics(track){
   const lrcFile=track.replace(".mp3",".lrc");
-  fetch(lrcFile).then(res=>res.text()).then(parseLRC).catch(()=>{lyricsData=[];lyricsEl.innerHTML="<li>暂无歌词</li>";});
+  fetch(lrcFile)
+    .then(res=>res.text())
+    .then(parseLRC)
+    .catch(()=>{lyricsData=[];lyricsEl.innerHTML="<li>暂无歌词</li>";});
 }
 function parseLRC(text){
   lyricsData=[];
@@ -166,7 +166,11 @@ audio.addEventListener("timeupdate",()=>{
   }
   if(currentLyricIndex<0) currentLyricIndex=0;
   const lis=lyricsEl.querySelectorAll("li");
-  lis.forEach((li,idx)=>{li.classList.remove("active","before","after");if(idx<currentLyricIndex) li.classList.add("before");else if(idx>currentLyricIndex) li.classList.add("after");});
+  lis.forEach((li,idx)=>{
+    li.classList.remove("active","before","after");
+    if(idx<currentLyricIndex) li.classList.add("before");
+    else if(idx>currentLyricIndex) li.classList.add("after");
+  });
   if(lyricsData[currentLyricIndex]) lis[currentLyricIndex].classList.add("active");
   const container=document.getElementById("lyrics-container");
   const activeLi=lis[currentLyricIndex];
